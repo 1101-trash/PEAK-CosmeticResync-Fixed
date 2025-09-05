@@ -1,0 +1,9 @@
+{
+    "name": "CosmeticResync",
+    "description": "Preserves your look when adding or removing cosmetics",
+    "version_number": "1.0.0",
+    "website_url": "https://github.com/BlueAmulet/PEAK_CosmeticResync",
+    "dependencies": [
+        "BepInEx-BepInExPack_PEAK-5.4.75301"
+    ]
+}
