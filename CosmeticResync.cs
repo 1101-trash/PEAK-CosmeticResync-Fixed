@@ -13,10 +13,10 @@ namespace CosmeticResync
 	[BepInDependency("com.github.Spider-XD-Gaming.Multi-Cosmetic", BepInDependency.DependencyFlags.SoftDependency)]
 	public class CosmeticResync : BaseUnityPlugin
 	{
-		internal const string Name = "CosmeticResync";
-		internal const string Author = "BlueAmulet";
+		internal const string Name = "CosmeticResync Fixed";
+		internal const string Author = "1101trash";
 		internal const string ID = Author + "." + Name;
-		internal const string Version = "1.0.0";
+		internal const string Version = "1.1.0";
 
 		internal new static ManualLogSource Logger;
 
