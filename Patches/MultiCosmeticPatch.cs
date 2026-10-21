@@ -50,6 +50,12 @@ namespace CosmeticResync.Patches
 				return true;
 			}
 
+			if (_currentData == null)
+			{
+				CosmeticResync.Logger.LogError("MultiCosmetic.currentData field not found, cannot Resync Multicosmetic");
+				return true;
+			}
+
 			Customization customization = Customization.Instance;
 			if (!customization)
 			{
@@ -73,7 +79,12 @@ namespace CosmeticResync.Patches
 			{
 				// Deserialize and validate
 				string[][] cosmeticNames = JsonConvert.DeserializeObject<string[][]>(multiData);
-				if (cosmeticNames.Length != 2)
+				if (cosmeticNames == null)
+				{
+					CosmeticResync.Logger.LogError("CosmeticResync_MultiCosmetic is null");
+					return true;
+				}
+				if (cosmeticNames.Length != 2 || cosmeticNames[0] == null || cosmeticNames[1] == null)
 				{
 					CosmeticResync.Logger.LogWarning($"CosmeticResync_MultiCosmetic is malformed, expected 2 arrays, got {cosmeticNames.Length}");
 					return true;
@@ -100,6 +111,12 @@ namespace CosmeticResync.Patches
 				CosmeticResync.Logger.LogError("Missing MultiCosmetic instance? Cannot save MultiCosmetic names");
 				return;
 			}
+			
+			if (_currentData == null)
+			{
+				CosmeticResync.Logger.LogError("MultiCosmetic.currentData field not found, cannot save MultiCosmetic names");
+				return;
+			}
 
 			Customization customization = Customization.Instance;
 			if (!customization)
@@ -109,9 +126,19 @@ namespace CosmeticResync.Patches
 			}
 
 			int[][] cosmeticData = (int[][])_currentData.GetValue(MultiCosmetic);
+			if (cosmeticData == null)
+			{
+				CosmeticResync.Logger.LogError($"MultiCosmetic.currentData is null");
+				return;
+			}
 			if (cosmeticData.Length != 2)
 			{
 				CosmeticResync.Logger.LogError($"Expected MultiCosmetic.Plugin.currentData to contain 2 int[], not {cosmeticData.Length}");
+				return;
+			}
+			if (cosmeticData[0] == null || cosmeticData[1] == null)
+			{
+				CosmeticResync.Logger.LogError("MultiCosmetic.currentData contains a null array");
 				return;
 			}
 
@@ -119,6 +146,8 @@ namespace CosmeticResync.Patches
 			string[] hats = GetCosmeticNames(customization.hats, cosmeticData[1], "Hat");
 			string jsonData = JsonConvert.SerializeObject(new[] { accessories, hats });
 			PlayerPrefs.SetString("CosmeticResync_MultiCosmetic", jsonData);
+			PlayerPrefs.Save();
+			CosmeticResync.Logger.LogInfo($"Saved {accessories.Length} accessories and {hats.Length} hats");
 		}
 
 		[HarmonyPostfix]
@@ -155,6 +184,12 @@ namespace CosmeticResync.Patches
 			List<int> indices = new List<int>();
 			foreach (string optionName in names)
 			{
+				if (optionName == null)
+				{
+					CosmeticResync.Logger.LogWarning($"{cosmeticType} name is null; skipping");
+					continue;
+				}
+
 				if (optionMap.TryGetValue(optionName, out int index))
 				{
 					indices.Add(index);

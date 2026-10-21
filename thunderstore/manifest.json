@@ -1,6 +1,6 @@
 {
     "name": "CosmeticResync Fixed",
-    "description": "Fix multiple hats and accesories not loading back starting a new game when using MultiCosmetic mod with CosmeticResync, that preserves your look when adding or removing cosmetics.",
+    "description": "Fix multiple hats and accesories not loading back starting a new game when using MultiCosmetic mod with CosmeticResync, that preserves your look when adding or removing cosmetics",
     "version_number": "1.1.0",
     "website_url": "https://github.com/1101trash/PEAK-CosmeticResync-Fix",
     "dependencies": [

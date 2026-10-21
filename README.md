@@ -5,7 +5,7 @@ Get it at [the CosmeticResync Fixed Thunderstore page](https://thunderstore.io/c
 
 ___
 
-## Support the original mod:
+## Support the original mod
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/BlueAmulet)  
 Saves the names of cosmetics and not just their index, preventing random cosmetics from loading instead.  
