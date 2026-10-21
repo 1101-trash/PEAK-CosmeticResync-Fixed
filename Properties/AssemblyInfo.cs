@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct(CosmeticResync.CosmeticResync.Name)]
-[assembly: AssemblyCopyright("Copyright © " + CosmeticResync.CosmeticResync.Author + " 2025")]
+[assembly: AssemblyCopyright("Copyright © " + CosmeticResync.CosmeticResync.Author + " 2026")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
