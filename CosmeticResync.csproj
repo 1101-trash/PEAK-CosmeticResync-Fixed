@@ -35,7 +35,7 @@
   <Target Name="CopiarDllRelease" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
     <Copy 
         SourceFiles="$(TargetPath)" 
-        DestinationFolder="$(MSBuildProjectDirectory)\thunderstore\BepInEx\plugins\" 
+        DestinationFolder="$(MSBuildProjectDirectory)\thunderstore\plugins\" 
         SkipUnchangedFiles="true" />
   </Target>
 </Project>
