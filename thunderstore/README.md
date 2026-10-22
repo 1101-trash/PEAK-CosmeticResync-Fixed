@@ -44,6 +44,7 @@ If you are installing this manually, do the following\:
 ### License
 
 This fix is provided in good faith for the community; all credit goes to the original author\.
+
 ---
 
 ### [Support the original mod](https://github.com/BlueAmulet/PEAK_CosmeticResync)
