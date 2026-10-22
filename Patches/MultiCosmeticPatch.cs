@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using HarmonyLib;
 using Newtonsoft.Json;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
@@ -13,6 +14,17 @@ namespace CosmeticResync.Patches
 		internal static BaseUnityPlugin MultiCosmetic;
 
 		private static FieldInfo _currentData;
+		private static bool _restoreQueued;
+		private static bool _restorePending;
+		private static bool _pendingSaveLogged;
+
+		private enum RestoreResult
+		{
+			Restored,
+			Retry,
+			NoSavedData,
+			InvalidData
+		}
 
 		internal static bool GetCurrentDataField()
 		{
@@ -36,6 +48,7 @@ namespace CosmeticResync.Patches
 				return false;
 			}
 			_currentData = field;
+			_restorePending = PlayerPrefs.HasKey("CosmeticResync_MultiCosmetic");
 			return true;
 		}
 
@@ -56,51 +69,8 @@ namespace CosmeticResync.Patches
 				return true;
 			}
 
-			Customization customization = Customization.Instance;
-			if (!customization)
-			{
-				CosmeticResync.Logger.LogError("Customization not initialized, cannot resync MultiCosmetic");
-				return true;
-			}
-
-			if (!PlayerPrefs.HasKey("CosmeticResync_MultiCosmetic"))
-			{
-				return true;
-			}
-
-			// Fill in the mod's data ourselves using cosmetic names
-			string multiData = PlayerPrefs.GetString("CosmeticResync_MultiCosmetic");
-			if (string.IsNullOrWhiteSpace(multiData))
-			{
-				CosmeticResync.Logger.LogWarning("CosmeticResync_MultiCosmetic has no data, nothing to resync");
-				return true;
-			}
-			try
-			{
-				// Deserialize and validate
-				string[][] cosmeticNames = JsonConvert.DeserializeObject<string[][]>(multiData);
-				if (cosmeticNames == null)
-				{
-					CosmeticResync.Logger.LogError("CosmeticResync_MultiCosmetic is null");
-					return true;
-				}
-				if (cosmeticNames.Length != 2 || cosmeticNames[0] == null || cosmeticNames[1] == null)
-				{
-					CosmeticResync.Logger.LogWarning($"CosmeticResync_MultiCosmetic is malformed, expected 2 arrays, got {cosmeticNames.Length}");
-					return true;
-				}
-				// Decode accessories and hats
-				int[] accessories = GetCosmeticIndices(customization.accessories, cosmeticNames[0], "Accessory");
-				int[] hats = GetCosmeticIndices(customization.hats, cosmeticNames[1], "Hat");
-				CosmeticResync.Logger.LogInfo($"Loaded {accessories.Length} accessories and {hats.Length} hats");
-				_currentData.SetValue(MultiCosmetic, new[] { accessories, hats });
-				return false;
-			}
-			catch (JsonException)
-			{
-				CosmeticResync.Logger.LogWarning("Failed to deserialize CosmeticResync_MultiCosmetic");
-				return true;
-			}
+			RestoreResult result = TryRestoreSavedCosmetics(out _, out _);
+			return result != RestoreResult.Restored;
 		}
 
 		internal static void PostfixUpdateCustomPropertiesValue()
@@ -115,6 +85,16 @@ namespace CosmeticResync.Patches
 			if (_currentData == null)
 			{
 				CosmeticResync.Logger.LogError("MultiCosmetic.currentData field not found, cannot save MultiCosmetic names");
+				return;
+			}
+
+			if (_restorePending)
+			{
+				if (!_pendingSaveLogged)
+				{
+					CosmeticResync.Logger.LogInfo("Skipping MultiCosmetic save while saved cosmetic names are awaiting restoration");
+					_pendingSaveLogged = true;
+				}
 				return;
 			}
 
@@ -142,11 +122,16 @@ namespace CosmeticResync.Patches
 				return;
 			}
 
-			string[] accessories = GetCosmeticNames(customization.accessories, cosmeticData[0], "Accessory");
-			string[] hats = GetCosmeticNames(customization.hats, cosmeticData[1], "Hat");
+			if (!TryGetCosmeticNames(customization.accessories, cosmeticData[0], "Accessory", out string[] accessories) ||
+				!TryGetCosmeticNames(customization.hats, cosmeticData[1], "Hat", out string[] hats))
+			{
+				return;
+			}
+
 			string jsonData = JsonConvert.SerializeObject(new[] { accessories, hats });
 			PlayerPrefs.SetString("CosmeticResync_MultiCosmetic", jsonData);
 			PlayerPrefs.Save();
+			_pendingSaveLogged = false;
 			CosmeticResync.Logger.LogInfo($"Saved {accessories.Length} accessories and {hats.Length} hats");
 		}
 
@@ -161,7 +146,12 @@ namespace CosmeticResync.Patches
 				// Fix up Customization.Instance
 				Customization._instance = customization;
 				CosmeticResync.Logger.LogInfo("Manually updating MultiCosmetic");
-				PrefixMCDataFromString();
+				if (!_restoreQueued)
+				{
+					_restoreQueued = true;
+					CosmeticResync.Logger.LogInfo("Queued MultiCosmetic restore; waiting for cosmetic options to become available");
+					CosmeticResync.Instance.StartCoroutine(RestoreWhenReady());
+				}
 			}
 			else
 			{
@@ -171,53 +161,171 @@ namespace CosmeticResync.Patches
 
 		// Utility methods
 
-		private static int[] GetCosmeticIndices(CustomizationOption[] options, string[] names, string cosmeticType)
+		private static IEnumerator RestoreWhenReady()
 		{
-			// Build up a map of option names to indices
-			Dictionary<string, int> optionMap = new Dictionary<string, int>(0);
-			for (int i = 0; i < options.Length; i++)
+			string[] missingAccessories = new string[0];
+			string[] missingHats = new string[0];
+			for (int attempt = 0; attempt < 30; attempt++)
 			{
-				CustomizationOption option = options[i];
-				optionMap[option.name] = i;
-			}
-			// Locate the current index of each cosmetic
-			List<int> indices = new List<int>();
-			foreach (string optionName in names)
-			{
-				if (optionName == null)
+				RestoreResult result = TryRestoreSavedCosmetics(out missingAccessories, out missingHats);
+				if (result == RestoreResult.NoSavedData)
 				{
-					CosmeticResync.Logger.LogWarning($"{cosmeticType} name is null; skipping");
-					continue;
+					CosmeticResync.Logger.LogInfo("No saved MultiCosmetic names found; keeping MultiCosmetic's current data");
+					_restoreQueued = false;
+					yield break;
+				}
+				if (result != RestoreResult.Retry)
+				{
+					_restoreQueued = false;
+					_pendingSaveLogged = false;
+					yield break;
 				}
 
-				if (optionMap.TryGetValue(optionName, out int index))
+				yield return new WaitForSecondsRealtime(1f);
+			}
+
+			foreach (string name in missingAccessories)
+			{
+				CosmeticResync.Logger.LogWarning($"Accessory {name} is still unavailable after waiting for cosmetic registration");
+			}
+			foreach (string name in missingHats)
+			{
+				CosmeticResync.Logger.LogWarning($"Hat {name} is still unavailable after waiting for cosmetic registration");
+			}
+			if (missingAccessories.Length == 0 && missingHats.Length == 0)
+			{
+				CosmeticResync.Logger.LogError("Customization was not ready in time; could not resync MultiCosmetic");
+			}
+			else
+			{
+				CosmeticResync.Logger.LogError("Could not resync every saved cosmetic after 30 seconds; preserving saved names and skipping MultiCosmetic saves");
+			}
+			_restoreQueued = false;
+		}
+
+		private static RestoreResult TryRestoreSavedCosmetics(out string[] missingAccessories, out string[] missingHats)
+		{
+			missingAccessories = new string[0];
+			missingHats = new string[0];
+
+			if (MultiCosmetic == null || _currentData == null)
+			{
+				CosmeticResync.Logger.LogError("MultiCosmetic is not ready; cannot restore saved cosmetics");
+				return RestoreResult.InvalidData;
+			}
+
+			if (!PlayerPrefs.HasKey("CosmeticResync_MultiCosmetic"))
+			{
+				_restorePending = false;
+				return RestoreResult.NoSavedData;
+			}
+
+			string multiData = PlayerPrefs.GetString("CosmeticResync_MultiCosmetic");
+			if (string.IsNullOrWhiteSpace(multiData))
+			{
+				CosmeticResync.Logger.LogWarning("CosmeticResync_MultiCosmetic has no data, nothing to resync");
+				_restorePending = false;
+				return RestoreResult.InvalidData;
+			}
+
+			try
+			{
+				string[][] cosmeticNames = JsonConvert.DeserializeObject<string[][]>(multiData);
+				if (cosmeticNames == null || cosmeticNames.Length != 2 ||
+					cosmeticNames[0] == null || cosmeticNames[1] == null)
 				{
-					indices.Add(index);
+					CosmeticResync.Logger.LogWarning("CosmeticResync_MultiCosmetic is malformed; expected two name arrays");
+					_restorePending = false;
+					return RestoreResult.InvalidData;
+				}
+
+				Customization customization = Customization.Instance;
+				if (!customization)
+				{
+					return RestoreResult.Retry;
+				}
+
+				bool accessoriesResolved = TryGetCosmeticIndices(customization.accessories, cosmeticNames[0], out int[] accessories, out missingAccessories);
+				bool hatsResolved = TryGetCosmeticIndices(customization.hats, cosmeticNames[1], out int[] hats, out missingHats);
+				if (!accessoriesResolved || !hatsResolved)
+				{
+					return RestoreResult.Retry;
+				}
+
+				_currentData.SetValue(MultiCosmetic, new[] { accessories, hats });
+				_restorePending = false;
+				CosmeticResync.Logger.LogInfo($"Loaded {accessories.Length} accessories and {hats.Length} hats");
+				return RestoreResult.Restored;
+			}
+			catch (JsonException)
+			{
+				CosmeticResync.Logger.LogWarning("Failed to deserialize CosmeticResync_MultiCosmetic");
+				_restorePending = false;
+				return RestoreResult.InvalidData;
+			}
+		}
+
+		private static bool TryGetCosmeticIndices(CustomizationOption[] options, string[] names, out int[] indices, out string[] missingNames)
+		{
+			Dictionary<string, int> optionMap = new Dictionary<string, int>();
+			if (options != null)
+			{
+				for (int i = 0; i < options.Length; i++)
+				{
+					CustomizationOption option = options[i];
+					if (option != null && !string.IsNullOrEmpty(option.name))
+					{
+						optionMap[option.name] = i;
+					}
+				}
+			}
+
+			List<int> resolvedIndices = new List<int>();
+			List<string> missing = new List<string>();
+			foreach (string optionName in names)
+			{
+				if (!string.IsNullOrEmpty(optionName) && optionMap.TryGetValue(optionName, out int index))
+				{
+					resolvedIndices.Add(index);
 				}
 				else
 				{
-					CosmeticResync.Logger.LogWarning($"{cosmeticType} {optionName} is no longer available");
+					missing.Add(optionName ?? "<null>");
 				}
 			}
-			return indices.ToArray();
+
+			indices = resolvedIndices.ToArray();
+			missingNames = missing.ToArray();
+			return missingNames.Length == 0;
 		}
 
-		private static string[] GetCosmeticNames(CustomizationOption[] options, int[] indices, string cosmeticType)
+		private static bool TryGetCosmeticNames(CustomizationOption[] options, int[] indices, string cosmeticType, out string[] names)
 		{
-			List<string> names = new List<string>();
+			List<string> resolvedNames = new List<string>();
+			names = new string[0];
+
+			if (options == null || indices == null)
+			{
+				CosmeticResync.Logger.LogError($"{cosmeticType} options or indices are null; cannot save MultiCosmetic names");
+				return false;
+			}
+
 			int optionsLength = options.Length;
 			foreach (int index in indices)
 			{
-				if (index >= 0 && index < optionsLength)
+				if (index >= 0 && index < optionsLength && options[index] != null && !string.IsNullOrEmpty(options[index].name))
 				{
-					names.Add(options[index].name);
+					resolvedNames.Add(options[index].name);
 				}
 				else
 				{
-					CosmeticResync.Logger.LogWarning($"{cosmeticType} #{index} is out of range");
+					CosmeticResync.Logger.LogError($"{cosmeticType} index #{index} cannot be resolved; preserving previously saved MultiCosmetic names");
+					return false;
 				}
 			}
-			return names.ToArray();
+
+			names = resolvedNames.ToArray();
+			return true;
 		}
 	}
 }

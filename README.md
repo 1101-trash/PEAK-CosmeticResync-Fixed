@@ -1,21 +1,36 @@
 # CosmeticResync FIXED for PEAK
 
-Fix multiple hats and accesories not loading back starting a new game when using MultiCosmetic mod with CosmeticResync, that preserves your look when adding or removing cosmetics.
-Get it at [the CosmeticResync Fixed Thunderstore page](https://thunderstore.io/c/peak/p/1101trash/CosmeticResync_Fixed/)
+Fixes an issue where MultiCosmetic selections, such as multiple hats and accessories, were not restored when starting a new game\. Now all your cosmetics will be properly saved and displayed\. Based on BlueAmulet's [CosmeticResync](https://github.com/BlueAmulet/PEAK_CosmeticResync), which preserves your cosmetic choices preventing getting your cosmetics changed when cosmetic mods are added or removed\.
 
-___
+This fix works over the [MultiCosmetic Mod](https://old.thunderstore.io/c/peak/p/Grimm_Industries/MultiCosmetic_Mod/) functionality overall \(see note\), however it still sync your outfits, eyes, face and other skin customization choices of your character just as the original mod\.
 
-## Support the original mod
+### [Download CosmeticResync Fixed from Thunderstore](https://thunderstore.io/c/peak/p/1101trash/CosmeticResync_Fixed/)
 
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/BlueAmulet)  
-Saves the names of cosmetics and not just their index, preventing random cosmetics from loading instead.  
-Download via [Thunderstore](https://thunderstore.io/c/peak/p/BlueAmulet/CosmeticResync/)
+---
 
-Libraries included in this project are stripped of code and used as reference only.
+## What this fork fixes
+
+Compared with the original mod, this fork waits for custom cosmetic options to finish loading before restoring saved MultiCosmetic selections\. This helps prevent hats and accessories from being skipped when their mods register them late\. It also validates MultiCosmetic data and avoids overwriting previously saved selections with incomplete data\.
+
+Meaning that if you have many cosmetic mods installed they will be all saved and loaded correctly on your character no matter how many of them are added or active\.
+
+Only  MultiCosmeticPatch was edited using the same logic, adding features you can see in the [changelog](./thunderstore/CHANGELOG.md)\. The mod without MultiCosmetic Mod should work the same *\(not tested\)*\.
+
+> **Note\:** This fix is specifically for use with MultiCosmetic\. If you don't use MultiCosmetic, you can use the original CosmeticResync instead\. MultiCosmetic lets you combine multiple head cosmetics, such as hair, hats, ears and others accessories that you can find in cosmetic mods\.
+
+If you encounter any issues or have a suggestion, feel free to create an [issue](https://github.com/1101-trash/PEAK-CosmeticResync-Fixed/issues)\.
+
+---
+
+<details>
+<summary>Support the original mod</summary>
+
+> [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/BlueAmulet)<br>Saves cosmetic names instead of just their indices, preventing random cosmetics from loading\.<br>Download via [Thunderstore](https://thunderstore.io/c/peak/p/BlueAmulet/CosmeticResync/)<br>Libraries included in this project are stripped of code and used as reference only\.
 
 ## Features
 
-> The names of equipped cosmetics are saved instead of just their index.  
-> Cosmetic index is resyncronized on load based on names.  
-> No more random cosmetics any time a cosmetic mod is added, updated, or removed!  
-> Compatible with More Customizations and MultiCosmetics.  
+> - Equipped cosmetics are saved by name instead of index.
+> - Cosmetic indices are resynchronized by name when loading.
+> - Prevents random cosmetics from appearing when a cosmetic mod is added, updated, or removed.
+> - Compatible with More Customizations and MultiCosmetics.
+</details>

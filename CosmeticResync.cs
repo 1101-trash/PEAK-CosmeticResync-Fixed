@@ -18,10 +18,12 @@ namespace CosmeticResync
 		internal const string ID = Author + "." + Name;
 		internal const string Version = "1.1.0";
 
+		internal static CosmeticResync Instance;
 		internal new static ManualLogSource Logger;
 
 		public void Awake()
 		{
+			Instance = this;
 			Logger = base.Logger;
 
 			Harmony harmony = new Harmony(ID);
