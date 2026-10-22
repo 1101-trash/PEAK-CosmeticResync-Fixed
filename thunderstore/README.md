@@ -4,6 +4,8 @@ Fixes an issue where MultiCosmetic selections, such as multiple hats and accesso
 
 This fix works over the [MultiCosmetic Mod](https://old.thunderstore.io/c/peak/p/Grimm_Industries/MultiCosmetic_Mod/) functionality overall \(see note\), however it still sync your outfits, eyes, face and other skin customization choices of your character just as the original mod\.
 
+You can check the [fork on Github](https://github.com/1101-trash/PEAK-CosmeticResync-Fixed/)
+
 ---
 
 ## What this fork fixes
@@ -20,15 +22,13 @@ If you encounter any issues or have a suggestion, feel free to create an [issue]
 
 ---
 
-## IMPORTANT\! \- Make sure to remove original CosmeticResync mod if you had it\!
+> ## IMPORTANT\! \- Make sure to remove original CosmeticResync mod if you already had it\!
 
----
-
-## Installation \(mod manager\)
+### Installation \(mod manager\)
 
 Simply click Install with App/Install with Mod Manager to automatically download and install the mod with the Thunderstore App or a compatible mod manager \(I recommend [Gale](https://github.com/Kesomannen/gale)\)
 
-## Installation (manual)
+### Installation \(manual\)
 If you are installing this manually, do the following
 
 1. Extract the archive into a folder. **Do not extract into the game folder.**
