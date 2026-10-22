@@ -26,8 +26,6 @@ This is my first attempt of a mod in C\# and I'm still learning the language\. I
 
 ## IMPORTANT\! \- Make sure to remove original CosmeticResync mod if you already had it\!
 
----
-
 ### Installation \(mod manager\)
 
 Simply click Install with App/Install with Mod Manager to automatically download and install the mod with the Thunderstore App or a compatible mod manager \(I recommend [Gale](https://github.com/Kesomannen/gale)\)
