@@ -1,6 +1,10 @@
 # CosmeticResync FIXED for PEAK
 
-Fixes an issue where MultiCosmetic selections, such as multiple hats and accessories, were not restored when starting a new game\. Now all your cosmetics will be properly saved and displayed\. Based on BlueAmulet's [CosmeticResync](https://old.thunderstore.io/c/peak/p/BlueAmulet/CosmeticResync/), which preserves your cosmetic choices preventing getting your cosmetics changed when cosmetic mods are added or removed\.
+### Patches the original **[Cosmetic Resync Mod](https://old.thunderstore.io/c/peak/p/BlueAmulet/CosmeticResync/)** from **BlueAmulet** using Multi Cosmetics\.
+
+---
+
+Fixes the issue of MultiCosmetic selections, such as multiple hats and accessories, not being restored when starting a new game\. Now all your cosmetics will be properly saved and displayed\. Based on BlueAmulet's [CosmeticResync](https://old.thunderstore.io/c/peak/p/BlueAmulet/CosmeticResync/), which preserves your cosmetic choices preventing getting your cosmetics changed when cosmetic mods are added or removed\.
 
 This fix works over the [MultiCosmetic Mod](https://old.thunderstore.io/c/peak/p/Grimm_Industries/MultiCosmetic_Mod/) functionality overall \(see note\), however it still sync your outfits, eyes, face and other skin customization choices \(without MultiCosmetic\) of your character just as the original mod\.
 
