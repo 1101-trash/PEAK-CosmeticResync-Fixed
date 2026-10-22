@@ -31,4 +31,10 @@
     </Reference>
   </ItemGroup>
 
+  <Target Name="CopiarDllRelease" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
+    <Copy 
+        SourceFiles="$(TargetPath)" 
+        DestinationFolder="$(MSBuildProjectDirectory)\thunderstore\" 
+        SkipUnchangedFiles="true" />
+  </Target>
 </Project>
