@@ -1,5 +1,5 @@
 {
-    "name": "CosmeticResync-Fixed",
+    "name": "CosmeticResync_Fixed",
     "version_number": "1.1.0",
     "website_url": "https://github.com/1101-trash/PEAK-CosmeticResync-Fixed",
     "description": "Fixes multiple equipped hats and accessories not loading back when starting a game using MultiCosmetic Mod with CosmeticResync, that preserves your look when adding or removing cosmetics",

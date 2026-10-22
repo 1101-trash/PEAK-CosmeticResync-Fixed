@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <AssemblyName>CosmeticResync_Fixed</AssemblyName>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Nullable>disable</Nullable>
     <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
@@ -34,7 +35,7 @@
   <Target Name="CopiarDllRelease" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
     <Copy 
         SourceFiles="$(TargetPath)" 
-        DestinationFolder="$(MSBuildProjectDirectory)\thunderstore\" 
+        DestinationFolder="$(MSBuildProjectDirectory)\thunderstore\BepInEx\plugins\" 
         SkipUnchangedFiles="true" />
   </Target>
 </Project>

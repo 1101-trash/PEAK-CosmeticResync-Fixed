@@ -31,11 +31,12 @@ If you encounter any issues or have a suggestion, feel free to create an [issue]
 Simply click Install with App/Install with Mod Manager to automatically download and install the mod with the Thunderstore App or a compatible mod manager \(I recommend [Gale](https://github.com/Kesomannen/gale)\)
 
 ### Installation \(manual\)
-If you are installing this manually, do the following
 
-1. Extract the archive into a folder. **Do not extract into the game folder.**
-2. Move the contents of `plugins` folder into `<GameDirectory>\BepInEx\plugins`.
-3. Run the game.
+If you are installing this manually, do the following\:
+
+1. Extract the archive into a folder\. **Do not extract into the game folder\.**
+2. Move the contents of `BepInEx\plugins` folder into `<GameDirectory>\BepInEx\plugins`\.
+3. Run the game\.
 
 ---
 
