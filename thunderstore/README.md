@@ -34,12 +34,16 @@ This is my first attempt of a mod in C\# and I'm still learning the language\. I
 Simply click Install with App/Install with Mod Manager to automatically download and install the mod with the Thunderstore App or a compatible mod manager \(I recommend [Gale](https://github.com/Kesomannen/gale)\)
 
 ### Installation \(manual\)
-If you are installing this manually, do the following
 
-1. Extract the archive into a folder. **Do not extract into the game folder.**
-2. Move the contents of `plugins` folder into `<GameDirectory>\BepInEx\plugins`.
-3. Run the game.
+If you are installing this manually, do the following\:
 
+1. Install BepInEx if you don't have it from [here](https://thunderstore.io/c/peak/p/BepInEx/BepInExPack_PEAK/)
+2. Extract the archive into a folder\. **Do not extract into the game folder\.**
+3. Move `CosmeticResync_Fixed.dll` from the mod's`plugins` folder into `<Game Directory>\BepInEx\plugins`\.
+
+### License
+
+This fix is provided in good faith for the community; all credit goes to the original author\.
 ---
 
 ### [Support the original mod](https://github.com/BlueAmulet/PEAK_CosmeticResync)
