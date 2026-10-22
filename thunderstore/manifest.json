@@ -4,7 +4,6 @@
     "website_url": "https://github.com/1101-trash/PEAK-CosmeticResync-Fixed",
     "description": "Fixes multiple equipped hats and accessories not loading back when starting a game using MultiCosmetic Mod with CosmeticResync, that preserves your look when adding or removing cosmetics",
     "dependencies": [
-        "BepInEx-BepInExPack_PEAK-5.4.75301",
-        "Grimm_Industries-MultiCosmetic_Mod-5.3.1"
+        "BepInEx-BepInExPack_PEAK-5.4.75301"
     ]
 }

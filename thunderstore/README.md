@@ -6,7 +6,6 @@ This fix works over the [MultiCosmetic Mod](https://old.thunderstore.io/c/peak/
 
 You can check the [fork on Github](https://github.com/1101-trash/PEAK-CosmeticResync-Fixed/)
 
----
 
 ## What this fork fixes
 
@@ -16,11 +15,11 @@ Meaning that if you have many cosmetic mods installed they will be all saved and
 
 Only  MultiCosmeticPatch was edited using the same logic, adding features you can see in the [changelog](./CHANGELOG.md)\. The mod without MultiCosmetic Mod should work the same *\(not tested\)*\.
 
-> **Note\:** This fix is specifically for use with MultiCosmetic\. If you don't use MultiCosmetic, you can use the original CosmeticResync instead, that's why I marked it as a dependence, since this fix works around it\.
+> **Note\:** This fix is specifically for use with MultiCosmetic\. If you don't use MultiCosmetic, you can use the original CosmeticResync instead\.
 > 
 > MultiCosmetic lets you combine multiple head cosmetics, such as hair, hats, ears and others accessories that you can find in cosmetic mods\.
 
-This is my first attempt of a mod in C\# and I'm still learning the language\. If you encounter any issues or have a suggestion, feel free to create an [issue](https://github.com/1101-trash/PEAK-CosmeticResync-Fixed/issues), as well as if you think you could upgrade the code fork it and pull a request\. I appreciate any feedback that can help improve this project\.
+This is my first attempt of a mod in C\# and I'm still learning the language\. If you encounter any bug or have a suggestion, feel free to create an [issue](https://github.com/1101-trash/PEAK-CosmeticResync-Fixed/issues), as well as if you think you could upgrade the code fork it and pull a request\. I appreciate any feedback that can help improve this project\.
 
 ---
 
